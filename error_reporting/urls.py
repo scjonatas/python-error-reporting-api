@@ -15,7 +15,14 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from django.conf.urls import url
+from rest_framework_simplejwt import views as jwt_views
+
+from error_reporting.api import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    url(r'^api/token/?$', jwt_views.TokenObtainPairView.as_view()),
+    url(r'^api/token/refresh/?$', jwt_views.TokenRefreshView.as_view()),
+    url(r'^api/hello/?$', views.HelloView.as_view()),
 ]
