@@ -14,13 +14,20 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import include, path
 from django.conf.urls import url
+from rest_framework import routers
 from rest_framework_simplejwt import views as jwt_views
 
 from error_reporting.api import views
 
+
+router = routers.DefaultRouter(trailing_slash=False)
+router.register(r'users/?', views.UserViewSet)
+router.register(r'groups/?', views.GroupViewSet)
+
 urlpatterns = [
+    url(r'^api/', include(router.urls)),
     path('admin/', admin.site.urls),
     url(r'^api/token/?$', jwt_views.TokenObtainPairView.as_view()),
     url(r'^api/token/refresh/?$', jwt_views.TokenRefreshView.as_view()),
