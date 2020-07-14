@@ -8,14 +8,6 @@ from rest_framework.permissions import IsAuthenticated
 from error_reporting.api.serializers import UserSerializer
 
 
-class HelloView(APIView):
-    permission_classes = (IsAuthenticated,)
-
-    def get(self, request):
-        content = {'message': 'Hello, World!'}
-        return Response(content)
-
-
 class UserViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,)
     queryset = User.objects.all().order_by('-date_joined')
