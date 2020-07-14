@@ -5,6 +5,7 @@ from django.urls import reverse
 USER_PASSWORD = 'strong-test-pass'
 
 
+# ----- FIXTURES -----
 @pytest.fixture
 def create_user(db, django_user_model):
     def make_user(**kwargs):
@@ -37,6 +38,7 @@ def api_client_with_credentials(db, create_superuser, api_client):
     api_client.force_authenticate(user=None)
 
 
+# ----- ENDPOINTS TESTS -----
 @pytest.mark.django_db
 def test_unauthorized_request(api_client):
     url = reverse('user-list')
@@ -71,4 +73,28 @@ def test_api_token_endpoint(
         "password": password
     }
     response = api_client.post(url, data=data)
+    assert response.status_code == status_code
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    'username, password, email, status_code', [
+       ('', '', '', 400),
+       ('', 'password', '', 400),
+       ('', '', 'email@email.com', 400),
+       ('username', '', '', 400),
+       ('username', 'password', 'invalidemail@', 400),
+       ('username', 'password', 'email@email.com', 201),
+    ]
+)
+def test_api_post_user_validations(
+    username, password, email, status_code, create_user, api_client_with_credentials
+):
+    url = reverse('user-list')
+    data = {
+        "username": username,
+        "password": password,
+        "email": email
+    }
+    response = api_client_with_credentials.post(url, data=data)
     assert response.status_code == status_code
