@@ -1,11 +1,11 @@
-from django.contrib.auth.models import User, Group
+from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
 from rest_framework import viewsets
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 
-from error_reporting.api.serializers import UserSerializer, GroupSerializer
+from error_reporting.api.serializers import UserSerializer
 
 
 class HelloView(APIView):
@@ -33,9 +33,3 @@ class UserViewSet(viewsets.ModelViewSet):
 
     def perform_update(self, serializer):
         self.save_user(serializer)
-
-
-class GroupViewSet(viewsets.ModelViewSet):
-    permission_classes = (IsAuthenticated,)
-    queryset = Group.objects.all()
-    serializer_class = GroupSerializer

@@ -24,7 +24,6 @@ from error_reporting.api import views
 
 router = routers.DefaultRouter(trailing_slash=False)
 router.register(r'users/?', views.UserViewSet)
-router.register(r'groups/?', views.GroupViewSet)
 
 urlpatterns = [
     url(r'^api/', include(router.urls)),

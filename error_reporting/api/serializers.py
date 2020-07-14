@@ -1,4 +1,4 @@
-from django.contrib.auth.models import User, Group
+from django.contrib.auth.models import User
 from rest_framework import serializers
 
 
@@ -12,22 +12,9 @@ class CreatableSlugRelatedField(serializers.SlugRelatedField):
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     url = serializers.HyperlinkedIdentityField(view_name="user-detail")
-    groups = CreatableSlugRelatedField(
-        many=True,
-        slug_field='name',
-        queryset=Group.objects
-    )
 
     class Meta:
         model = User
-        fields = ['id', 'url', 'username', 'password', 'first_name', 'last_name', 'email', 'groups']
+        fields = ['id', 'url', 'username', 'password', 'first_name', 'last_name', 'email']
         extra_kwargs = {'password': {'write_only': True}}
         read_only_fields = ['id']
-
-
-class GroupSerializer(serializers.HyperlinkedModelSerializer):
-    url = serializers.HyperlinkedIdentityField(view_name="group-detail")
-
-    class Meta:
-        model = Group
-        fields = ['id', 'url', 'name']
