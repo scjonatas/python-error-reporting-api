@@ -11,7 +11,7 @@ LEVEL_CHOICES = [
 ]
 
 
-class User(models.Model, StandardModelType):
+class EventUser(models.Model, StandardModelType):
     name = models.CharField(max_length=50)
     username = models.CharField(max_length=50, null=True)
     email = models.EmailField(validators=[EmailValidator], null=True)
@@ -29,7 +29,7 @@ class Environment(models.Model, StandardModelType):
 
 
 class Agent(models.Model, StandardModelType):
-    user = models.ForeignKey(User, related_name='agent', on_delete=models.PROTECT, null=True)
+    event_user = models.ForeignKey(EventUser, related_name='agent', on_delete=models.PROTECT, null=True)
     environment = models.ForeignKey(Environment, related_name='agent', on_delete=models.PROTECT)
     name = models.CharField(max_length=50)
     address = models.GenericIPAddressField(validators=[validate_ipv46_address], null=True)
