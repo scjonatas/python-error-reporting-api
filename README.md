@@ -1,2 +1,3 @@
 # python-error-reporting-api
-Error Reporting API built on top of Django Rest Framework
+## Work in progress
+Error Reporting API built on top of Django Rest Framework.
