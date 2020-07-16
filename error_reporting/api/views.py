@@ -3,7 +3,7 @@ from django.contrib.auth.hashers import make_password
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 
-from error_reporting.api.serializers import UserSerializer
+from .serializers import UserSerializer
 
 
 class UserViewSet(viewsets.ModelViewSet):

@@ -19,7 +19,7 @@ from django.conf.urls import url
 from rest_framework import routers
 from rest_framework_simplejwt import views as jwt_views
 
-from error_reporting.api import views
+from .api import views
 
 
 router = routers.DefaultRouter(trailing_slash=False)
