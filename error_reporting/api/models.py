@@ -12,10 +12,10 @@ LEVEL_CHOICES = [
 
 
 class EventUser(models.Model, StandardModelType):
-    name = models.CharField(max_length=50, null=True)
-    username = models.CharField(max_length=50, null=True)
-    email = models.EmailField(validators=[EmailValidator], null=True)
-    custom_data = models.TextField(null=True)
+    name = models.CharField(max_length=50, null=True, blank=True)
+    username = models.CharField(max_length=50, null=True, blank=True)
+    email = models.EmailField(validators=[EmailValidator], null=True, blank=True)
+    custom_data = models.TextField(null=True, blank=True)
 
     def __str__(self):
         return self.username
