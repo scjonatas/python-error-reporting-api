@@ -1,4 +1,5 @@
 from django.core.validators import EmailValidator, validate_ipv46_address
+from django.core.exceptions import ValidationError
 from django.db import models
 from django_hint import StandardModelType
 
@@ -22,6 +23,12 @@ class EventUser(models.Model, StandardModelType):
 
     class Meta:
         ordering = ['name']
+
+    def clean(self, *args, **kwargs):
+        if (self.username or self.email):
+            return super().clean(*args, **kwargs)
+
+        raise ValidationError('"username" or "email" should not be blank')
 
 
 class Environment(models.Model, StandardModelType):

@@ -1,6 +1,10 @@
 import pytest
 import uuid
 from django.urls import reverse
+from django.core.exceptions import ValidationError
+
+from .models import EventUser
+
 
 USER_PASSWORD = 'strong-test-pass'
 
@@ -38,7 +42,7 @@ def api_client_with_credentials(db, create_superuser, api_client):
     api_client.force_authenticate(user=None)
 
 
-# ----- ENDPOINTS TESTS -----
+# ----- API TESTS -----
 @pytest.mark.django_db
 def test_unauthorized_request(api_client):
     url = reverse('user-list')
@@ -98,3 +102,26 @@ def test_api_post_user_validations(
     }
     response = api_client_with_credentials.post(url, data=data)
     assert response.status_code == status_code
+
+
+# ----- MODEL TESTS -----
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    'username, email, expected_success', [
+       ('', '', False),
+       ('', 'invalid-email@', False),
+       ('', 'valid-email@email.com', True),
+       ('username', '', True),
+    ]
+)
+def test_event_user_validations(username, email, expected_success):
+    success = True
+    eventUser = EventUser()
+    eventUser.username = username
+    eventUser.email = email
+    try:
+        eventUser.full_clean()
+    except ValidationError:
+        success = False
+
+    assert success == expected_success
