@@ -92,7 +92,7 @@ def test_api_token_endpoint(
     ]
 )
 def test_api_post_user_validations(
-    username, password, email, status_code, create_user, api_client_with_credentials
+    username, password, email, status_code, api_client_with_credentials
 ):
     url = reverse('user-list')
     data = {
@@ -105,7 +105,6 @@ def test_api_post_user_validations(
 
 
 # ----- MODEL TESTS -----
-@pytest.mark.django_db
 @pytest.mark.parametrize(
     'username, email, expected_success', [
        ('', '', False),
