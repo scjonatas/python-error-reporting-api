@@ -16,8 +16,9 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include, path
 from django.conf.urls import url
-from rest_framework import routers
-from rest_framework_simplejwt import views as jwt_views
+from rest_framework import routers, permissions
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
 
 from .api import views
 
@@ -26,9 +27,36 @@ router = routers.DefaultRouter(trailing_slash=False)
 router.register(r'users/?', views.UserViewSet)
 router.register(r'events/?', views.EventViewSet)
 
+# Defining a router for swagger, because the "drf-yasg" was generating wrong endpoint paths for the paths ending with '/?'
+router_for_swagger = routers.DefaultRouter()
+router_for_swagger.register(r'users', views.UserViewSet)
+router_for_swagger.register(r'events', views.EventViewSet)
+
 urlpatterns = [
-    url(r'^api/', include(router.urls)),
     path('admin/', admin.site.urls),
-    url(r'^api/token/?$', jwt_views.TokenObtainPairView.as_view(), name='api-token'),
-    url(r'^api/token/refresh/?$', jwt_views.TokenRefreshView.as_view(), name='api-token-refresh'),
+    url(r'^api/token/?$', views.TokenObtainPairView.as_view(), name='api-token'),
+    url(r'^api/token/refresh/?$', views.TokenRefreshView.as_view(), name='api-token-refresh'),
+]
+
+schema_view = get_schema_view(
+    openapi.Info(
+        title="Error Reporting API",
+        default_version='v1',
+        description="API intended to report exceptions that occur in your application."
+                    + " The endpoints requires a JWT Token. You can use the username: 'admin' and password: 'admin' to get the authentication token through the /token endpoint."
+                    + " Once you get the token, you should pass 'Bearer <your-token-here>' in the 'Authorization' header."
+                    + " Note: the trailing slashes at the endpoints are optional.",
+        contact=openapi.Contact(email="scjonatas@gmail.com"),
+        license=openapi.License(name="BSD License"),
+    ),
+    public=True,
+    permission_classes=(permissions.AllowAny,),
+    patterns=[url(r'^api/', include(router_for_swagger.urls))] + urlpatterns
+)
+
+urlpatterns += [
+    url(r'^api/', include(router.urls)),
+    url(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
+    url(r'^swagger/$', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    url(r'^redoc/$', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
 ]

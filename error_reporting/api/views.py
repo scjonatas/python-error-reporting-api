@@ -1,14 +1,67 @@
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
+from django.utils.decorators import method_decorator
 from rest_framework import viewsets, mixins
 from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt import views as jwt_views
 from filters.mixins import FiltersMixin
+from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
 
 from .serializers import UserSerializer, EventSerializer
 from .validations import users_query_schema
 from .models import Event
 
 
+@method_decorator(name='post', decorator=swagger_auto_schema(
+    operation_summary='Returns a token and a refresh token for valid credentials',
+    operation_description="""
+    Takes a set of user credentials and returns an access and refresh JSON web
+    token pair to prove the authentication of those credentials.
+
+    You can use the following credentials to test:
+    ```
+    {
+        "username": "admin",
+        "password": "admin"
+    }
+    ```
+    """
+))
+class TokenObtainPairView(jwt_views.TokenObtainPairView):
+    pass
+
+
+@method_decorator(name='post', decorator=swagger_auto_schema(
+    operation_summary='Returns a token if the refresh token is valid',
+    operation_description="""
+    Takes a refresh type JSON web token and returns an access type JSON web
+    token if the refresh token is valid.
+    """
+))
+class TokenRefreshView(jwt_views.TokenRefreshView):
+    pass
+
+
+@method_decorator(name='list', decorator=swagger_auto_schema(
+    operation_summary='Returns a list of Auth Users',
+    operation_description='documentar os filtros'
+))
+@method_decorator(name='create', decorator=swagger_auto_schema(
+    operation_summary='Creates an Auth User'
+))
+@method_decorator(name='retrieve', decorator=swagger_auto_schema(
+    operation_summary='Find an Auth User by ID'
+))
+@method_decorator(name='update', decorator=swagger_auto_schema(
+    operation_summary='Updates an Auth User'
+))
+@method_decorator(name='partial_update', decorator=swagger_auto_schema(
+    operation_summary='Partially updates an Auth User'
+))
+@method_decorator(name='destroy', decorator=swagger_auto_schema(
+    operation_summary='Deletes an Auth User'
+))
 class UserViewSet(FiltersMixin, viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,)
     queryset = User.objects.all().order_by('-id')
@@ -47,6 +100,18 @@ class UserViewSet(FiltersMixin, viewsets.ModelViewSet):
         self.save_user(serializer)
 
 
+@method_decorator(name='list', decorator=swagger_auto_schema(
+    operation_summary='Returns a list of Events'
+))
+@method_decorator(name='create', decorator=swagger_auto_schema(
+    operation_summary='Creates an Event'
+))
+@method_decorator(name='retrieve', decorator=swagger_auto_schema(
+    operation_summary='Find an Event by ID'
+))
+@method_decorator(name='destroy', decorator=swagger_auto_schema(
+    operation_summary='Deletes an Event'
+))
 class EventViewSet(
     FiltersMixin,
     viewsets.GenericViewSet,
