@@ -42,10 +42,27 @@ class TokenObtainPairView(jwt_views.TokenObtainPairView):
 class TokenRefreshView(jwt_views.TokenRefreshView):
     pass
 
-
 @method_decorator(name='list', decorator=swagger_auto_schema(
     operation_summary='Returns a list of Auth Users',
-    operation_description='documentar os filtros'
+    operation_description=f"""
+        You can filter the results by using the following parameters in the query string:
+        ```
+        username
+        first_name
+        last_name
+        email
+        date_joined
+        date_joined__gt
+        date_joined__lt
+        date_joined__gte
+        date_joined__lte
+        last_login
+        last_login__gt
+        last_login__lt
+        last_login__gte
+        last_login__lte
+        ```
+    """
 ))
 @method_decorator(name='create', decorator=swagger_auto_schema(
     operation_summary='Creates an Auth User'
