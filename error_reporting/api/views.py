@@ -5,12 +5,12 @@ from rest_framework import viewsets, mixins
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt import views as jwt_views
 from filters.mixins import FiltersMixin
-from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 
 from .serializers import UserSerializer, EventSerializer
 from .validations import users_query_schema
 from .models import Event
+from .docs import ResponseDocs
 
 
 @method_decorator(name='post', decorator=swagger_auto_schema(
@@ -28,42 +28,9 @@ from .models import Event
     ```
     """,
     responses={
-        200: openapi.Response(
-            """
-            OK. Response example:
-            ```
-            {
-                "refresh": "<JWT>",
-                "access": "<JWT>"
-            }
-            ```
-            """
-        ),
-        400: openapi.Response(
-            """
-            Bad Request. Response example:
-            ```
-            {
-                "username": [
-                    "This field is required."
-                ],
-                "password": [
-                    "This field is required."
-                ]
-            }
-            ```
-            """
-        ),
-        401: openapi.Response(
-            """
-            Unauthorized. Response example:
-            ```
-            {
-                "detail": "No active account found with the given credentials"
-            }
-            ```
-            """
-        )
+        200: ResponseDocs.TOKEN_OK,
+        400: ResponseDocs.TOKEN_BAD_REQUEST,
+        401: ResponseDocs.TOKEN_UNAUTHORIZED
     }
 ))
 class TokenObtainPairView(jwt_views.TokenObtainPairView):
@@ -77,39 +44,9 @@ class TokenObtainPairView(jwt_views.TokenObtainPairView):
     token if the refresh token is valid.
     """,
     responses={
-        200: openapi.Response(
-            """
-            OK. Response example:
-            ```
-            {
-                "access": "<JWT>"
-            }
-            ```
-            """
-        ),
-        400: openapi.Response(
-            """
-            Bad Request. Response example:
-            ```
-            {
-                "refresh": [
-                    "This field is required."
-                ]
-            }
-            ```
-            """
-        ),
-        401: openapi.Response(
-            """
-            Unauthorized. Response example:
-            ```
-            {
-                "detail": "Token is invalid or expired",
-                "code": "token_not_valid"
-            }
-            ```
-            """
-        )
+        200: ResponseDocs.TOKEN_REFRESH_OK,
+        400: ResponseDocs.TOKEN_REFRESH_BAD_REQUEST,
+        401: ResponseDocs.TOKEN_REFRESH_UNAUTHORIZED
     }
 ))
 class TokenRefreshView(jwt_views.TokenRefreshView):
@@ -136,22 +73,48 @@ class TokenRefreshView(jwt_views.TokenRefreshView):
         last_login__gte
         last_login__lte
         ```
-    """
+    """,
+    responses={
+        401: ResponseDocs.UNAUTHORIZED,
+        404: ResponseDocs.INVALID_PAGE
+    }
 ))
 @method_decorator(name='create', decorator=swagger_auto_schema(
-    operation_summary='Creates an Auth User'
+    operation_summary='Creates an Auth User',
+    responses={
+        400: ResponseDocs.USER_BAD_REQUEST,
+        401: ResponseDocs.UNAUTHORIZED
+    }
 ))
 @method_decorator(name='retrieve', decorator=swagger_auto_schema(
-    operation_summary='Find an Auth User by ID'
+    operation_summary='Find an Auth User by ID',
+    responses={
+        401: ResponseDocs.UNAUTHORIZED,
+        404: ResponseDocs.NOT_FOUND
+    }
 ))
 @method_decorator(name='update', decorator=swagger_auto_schema(
-    operation_summary='Updates an Auth User'
+    operation_summary='Updates an Auth User',
+    responses={
+        400: ResponseDocs.USER_BAD_REQUEST,
+        401: ResponseDocs.UNAUTHORIZED,
+        404: ResponseDocs.NOT_FOUND
+    }
 ))
 @method_decorator(name='partial_update', decorator=swagger_auto_schema(
-    operation_summary='Partially updates an Auth User'
+    operation_summary='Partially updates an Auth User',
+    responses={
+        401: ResponseDocs.UNAUTHORIZED,
+        404: ResponseDocs.NOT_FOUND
+    }
 ))
 @method_decorator(name='destroy', decorator=swagger_auto_schema(
-    operation_summary='Deletes an Auth User'
+    operation_summary='Deletes an Auth User',
+    responses={
+        204: 'No Content',
+        401: ResponseDocs.UNAUTHORIZED,
+        404: ResponseDocs.NOT_FOUND
+    }
 ))
 class UserViewSet(FiltersMixin, viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,)
@@ -192,16 +155,33 @@ class UserViewSet(FiltersMixin, viewsets.ModelViewSet):
 
 
 @method_decorator(name='list', decorator=swagger_auto_schema(
-    operation_summary='Returns a list of Events'
+    operation_summary='Returns a list of Events',
+    responses={
+        401: ResponseDocs.UNAUTHORIZED,
+        404: ResponseDocs.INVALID_PAGE
+    }
 ))
 @method_decorator(name='create', decorator=swagger_auto_schema(
-    operation_summary='Creates an Event'
+    operation_summary='Creates an Event',
+    responses={
+        400: ResponseDocs.EVENT_BAD_REQUEST,
+        401: ResponseDocs.UNAUTHORIZED
+    }
 ))
 @method_decorator(name='retrieve', decorator=swagger_auto_schema(
-    operation_summary='Find an Event by ID'
+    operation_summary='Find an Event by ID',
+    responses={
+        401: ResponseDocs.UNAUTHORIZED,
+        404: ResponseDocs.NOT_FOUND
+    }
 ))
 @method_decorator(name='destroy', decorator=swagger_auto_schema(
-    operation_summary='Deletes an Event'
+    operation_summary='Deletes an Event',
+    responses={
+        204: 'No Content',
+        401: ResponseDocs.UNAUTHORIZED,
+        404: ResponseDocs.NOT_FOUND
+    }
 ))
 class EventViewSet(
     FiltersMixin,

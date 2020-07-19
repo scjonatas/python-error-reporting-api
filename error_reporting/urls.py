@@ -45,7 +45,7 @@ schema_view = get_schema_view(
         description="""
                     API intended to report exceptions that occur in your application.
                     The endpoints requires a JWT Token. You can use the username: 'admin' and password: 'admin' to get the authentication token through the /token endpoint.
-                    Once you get the token, you should pass 'Bearer <your-token-here>' in the 'Authorization' header.
+                    Once you get the token, you should pass 'Bearer <your-token-here>' in the 'Authorization' header. The token is valid during 5 minutes.
                     Note: the trailing slashes at the endpoints are optional.
                     """,
         contact=openapi.Contact(email="scjonatas@gmail.com"),
