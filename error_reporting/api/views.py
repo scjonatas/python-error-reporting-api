@@ -26,7 +26,45 @@ from .models import Event
         "password": "admin"
     }
     ```
-    """
+    """,
+    responses={
+        200: openapi.Response(
+            """
+            OK. Response example:
+            ```
+            {
+                "refresh": "<JWT>",
+                "access": "<JWT>"
+            }
+            ```
+            """
+        ),
+        400: openapi.Response(
+            """
+            Bad Request. Response example:
+            ```
+            {
+                "username": [
+                    "This field is required."
+                ],
+                "password": [
+                    "This field is required."
+                ]
+            }
+            ```
+            """
+        ),
+        401: openapi.Response(
+            """
+            Unauthorized. Response example:
+            ```
+            {
+                "detail": "No active account found with the given credentials"
+            }
+            ```
+            """
+        )
+    }
 ))
 class TokenObtainPairView(jwt_views.TokenObtainPairView):
     pass
@@ -37,14 +75,50 @@ class TokenObtainPairView(jwt_views.TokenObtainPairView):
     operation_description="""
     Takes a refresh type JSON web token and returns an access type JSON web
     token if the refresh token is valid.
-    """
+    """,
+    responses={
+        200: openapi.Response(
+            """
+            OK. Response example:
+            ```
+            {
+                "access": "<JWT>"
+            }
+            ```
+            """
+        ),
+        400: openapi.Response(
+            """
+            Bad Request. Response example:
+            ```
+            {
+                "refresh": [
+                    "This field is required."
+                ]
+            }
+            ```
+            """
+        ),
+        401: openapi.Response(
+            """
+            Unauthorized. Response example:
+            ```
+            {
+                "detail": "Token is invalid or expired",
+                "code": "token_not_valid"
+            }
+            ```
+            """
+        )
+    }
 ))
 class TokenRefreshView(jwt_views.TokenRefreshView):
     pass
 
+
 @method_decorator(name='list', decorator=swagger_auto_schema(
     operation_summary='Returns a list of Auth Users',
-    operation_description=f"""
+    operation_description="""
         You can filter the results by using the following parameters in the query string:
         ```
         username
