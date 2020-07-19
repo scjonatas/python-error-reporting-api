@@ -124,3 +124,107 @@ def test_event_user_validations(username, email, expected_success):
         success = False
 
     assert success == expected_success
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    'data, status_code', [
+       (
+            {
+                "level": "error",
+                "message": "Error test"
+            },
+            400
+       ),
+       (
+            {
+                "agent": {
+                    "event_user": {
+                        "username": "test-user-event"
+                    },
+                    "name": "Chrome",
+                    "version": "10"
+                },
+                "level": "error",
+                "message": "Error test"
+            },
+            400
+       ),
+       (
+            {
+                "agent": {
+                    "event_user": {
+                        "username": "test-user-event"
+                    },
+                    "environment": "sandbox",
+                    "version": "10"
+                },
+                "level": "error",
+                "message": "Error test"
+            },
+            400
+       ),
+       (
+            {
+                "agent": {
+                    "event_user": {
+                        "username": "test-user-event"
+                    },
+                    "environment": "sandbox",
+                    "name": "Chrome"
+                },
+                "level": "error",
+                "message": "Error test"
+            },
+            400
+       ),
+       (
+            {
+                "agent": {
+                    "event_user": {
+                        "username": "test-user-event"
+                    },
+                    "environment": "sandbox",
+                    "name": "Chrome",
+                    "version": "10",
+                    "address": "10.10.10"
+                },
+                "level": "error",
+                "message": "Error test"
+            },
+            400
+       ),
+       (
+            {
+                "agent": {
+                    "event_user": {
+                        "username": "test-user-event"
+                    },
+                    "environment": "sandbox",
+                    "name": "Chrome",
+                    "version": "10",
+                    "address": "192.168.0.2"
+                },
+                "level": "error",
+                "message": "Error test"
+            },
+            201
+       ),
+       (
+            {
+                "agent": {
+                    "environment": "sandbox",
+                    "name": "Chrome",
+                    "version": "10"
+                },
+                "level": "error",
+                "message": "Error test"
+            },
+            201
+       ),
+    ]
+)
+def test_api_post_event(data, status_code, api_client_with_credentials):
+    url = reverse('event-list')
+    response = api_client_with_credentials.post(url, data=data, format='json')
+    assert response.status_code == status_code

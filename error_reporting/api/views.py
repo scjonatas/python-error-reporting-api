@@ -1,11 +1,12 @@
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
-from rest_framework import viewsets
+from rest_framework import viewsets, mixins
 from rest_framework.permissions import IsAuthenticated
 from filters.mixins import FiltersMixin
 
-from .serializers import UserSerializer
+from .serializers import UserSerializer, EventSerializer
 from .validations import users_query_schema
+from .models import Event
 
 
 class UserViewSet(FiltersMixin, viewsets.ModelViewSet):
@@ -44,3 +45,16 @@ class UserViewSet(FiltersMixin, viewsets.ModelViewSet):
 
     def perform_update(self, serializer):
         self.save_user(serializer)
+
+
+class EventViewSet(
+    FiltersMixin,
+    viewsets.GenericViewSet,
+    mixins.ListModelMixin,
+    mixins.RetrieveModelMixin,
+    mixins.CreateModelMixin,
+    mixins.DestroyModelMixin
+):
+    permission_classes = (IsAuthenticated,)
+    queryset = Event.objects.all().order_by('-id')
+    serializer_class = EventSerializer

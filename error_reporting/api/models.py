@@ -36,12 +36,12 @@ class Environment(models.Model, StandardModelType):
 
 
 class Agent(models.Model, StandardModelType):
-    event_user = models.ForeignKey(EventUser, related_name='agent', on_delete=models.PROTECT, null=True)
+    event_user = models.ForeignKey(EventUser, related_name='agent', on_delete=models.PROTECT, null=True, blank=True)
     environment = models.ForeignKey(Environment, related_name='agent', on_delete=models.PROTECT)
     name = models.CharField(max_length=50)
-    address = models.GenericIPAddressField(validators=[validate_ipv46_address], null=True)
+    address = models.GenericIPAddressField(validators=[validate_ipv46_address], null=True, blank=True)
     version = models.CharField(max_length=10)
-    custom_data = models.TextField()
+    custom_data = models.TextField(null=True, blank=True)
 
     def __str__(self):
         return self.name
@@ -51,11 +51,11 @@ class Agent(models.Model, StandardModelType):
 
 
 class Event(models.Model, StandardModelType):
-    agent = models.OneToOneField(Agent, on_delete=models.PROTECT)
+    agent = models.ForeignKey(Agent, on_delete=models.PROTECT)
     level = models.CharField(max_length=20, choices=LEVEL_CHOICES)
     message = models.CharField(max_length=255)
-    stacktrace = models.TextField(null=True)
-    custom_data = models.TextField(null=True)
+    stacktrace = models.TextField(null=True, blank=True)
+    custom_data = models.TextField(null=True, blank=True)
     archived = models.BooleanField(default=False)
     datetime_created = models.DateTimeField(auto_now_add=True)
 

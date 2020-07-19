@@ -24,6 +24,7 @@ from .api import views
 
 router = routers.DefaultRouter(trailing_slash=False)
 router.register(r'users/?', views.UserViewSet)
+router.register(r'events/?', views.EventViewSet)
 
 urlpatterns = [
     url(r'^api/', include(router.urls)),
