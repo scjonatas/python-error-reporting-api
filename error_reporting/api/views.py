@@ -156,6 +156,33 @@ class UserViewSet(FiltersMixin, viewsets.ModelViewSet):
 
 @method_decorator(name='list', decorator=swagger_auto_schema(
     operation_summary='Returns a list of Events',
+    operation_description="""
+    You can filter the results by using the following parameters in the query string:
+    ```
+    event_user_id
+    event_user_name
+    event_user_username
+    event_user_email
+    event_user_custom_data
+    agent_id
+    agent_name
+    environment
+    agent_address
+    agent_version
+    agent_custom_data
+    level (possible values: fatal, error, warning, debug, info)
+    level__in (ex: ?level__in[]=error&level__in[]=warning)
+    message
+    stacktrace
+    custom_data
+    archived (possible values: true, false, True, False, 0, 1)
+    datetime_created
+    datetime_created__gt
+    datetime_created__lt
+    datetime_created__gte
+    datetime_created__lte
+    ```
+    """,
     responses={
         401: ResponseDocs.UNAUTHORIZED,
         404: ResponseDocs.INVALID_PAGE
