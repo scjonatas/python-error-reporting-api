@@ -8,7 +8,7 @@ from filters.mixins import FiltersMixin
 from drf_yasg.utils import swagger_auto_schema
 
 from .serializers import UserSerializer, EventSerializer
-from .validations import users_query_schema
+from .validations import users_query_schema, events_query_schema
 from .models import Event
 from .docs import ResponseDocs
 
@@ -194,3 +194,30 @@ class EventViewSet(
     permission_classes = (IsAuthenticated,)
     queryset = Event.objects.all().order_by('-id')
     serializer_class = EventSerializer
+
+    filter_mappings = {
+        "event_user_id": "agent__event_user",
+        "event_user_name": "agent__event_user__name__icontains",
+        "event_user_username": "agent__event_user__username",
+        "event_user_email": "agent__event_user__email__icontains",
+        "event_user_custom_data": "agent__event_user__custom_data__icontains",
+        "agent_id": "agent__id",
+        "agent_name": "agent__name__icontains",
+        "environment": "agent__environment__name",
+        "agent_address": "agent__address__startswith",
+        "agent_version": "agent__version",
+        "agent_custom_data": "agent__custom_data__icontains",
+        "level": "level",
+        "level__in": "level__in",
+        "message": "message__icontains",
+        "stacktrace": "stacktrace__icontains",
+        "custom_data": "custom_data__icontains",
+        "archived": "archived",
+        "datetime_created": "datetime_created",
+        "datetime_created__gt": "datetime_created__gt",
+        "datetime_created__lt": "datetime_created__lt",
+        "datetime_created__gte": "datetime_created__gte",
+        "datetime_created__lte": "datetime_created__lte",
+    }
+
+    filter_validation_schema = events_query_schema
