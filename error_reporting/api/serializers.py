@@ -61,15 +61,14 @@ class EventSerializer(serializers.HyperlinkedModelSerializer):
         return event_user
 
     def get_or_create_agent(self, attributes: dict) -> 'Agent':
-        if (not('event_user' in attributes)):
-            attributes.event_user = None
+        if ('event_user' not in attributes):
+            attributes['event_user'] = None
         try:
             agent = Agent.objects.get(**attributes)
-            if (agent.event_user != attributes.event_user):
+            if (agent.event_user != attributes['event_user']):
                 raise Agent.DoesNotExist
         except Agent.DoesNotExist:
             agent = Agent(**attributes)
-            agent.event_user = attributes.event_user
             agent.full_clean()
             agent.save()
         return agent
@@ -79,7 +78,7 @@ class EventSerializer(serializers.HyperlinkedModelSerializer):
         agent_data = validated_data.pop('agent')
 
         if ('event_user' in agent_data):
-            agent_data.event_user = self.get_or_create_event_user(
+            agent_data['event_user'] = self.get_or_create_event_user(
                 agent_data.pop('event_user')
             )
 
