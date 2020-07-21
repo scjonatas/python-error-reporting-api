@@ -68,3 +68,9 @@ For more details about the API usage, please read the [documentation](http://err
 The API was documented using Swagger. There are two formats:
 - [Swagger UI](https://error-reporting-api.herokuapp.com/) (you can test the API here)
 - [ReDoc](https://error-reporting-api.herokuapp.com/redoc)
+
+## Tests
+The tests were developed using `pytest`, so to run the tests just execute:
+```
+pytest
+```
