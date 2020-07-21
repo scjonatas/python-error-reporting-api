@@ -43,9 +43,15 @@ schema_view = get_schema_view(
         title="Error Reporting API",
         default_version='v1',
         description="""
-                    API intended to report exceptions that occur in your application.
-                    The endpoints requires a JWT Token. You can use the username: 'admin' and password: 'admin' to get the authentication token through the /token endpoint.
-                    Once you get the token, you should pass the header 'Authorization: Bearer <your-token-here>' in the 'Authorization' header. The token is valid during 5 minutes.
+                    API intended to report exceptions that occur in your application. Here is the [project Github link](https://github.com/scjonatas/python-error-reporting-api)
+
+                    The Swagger UI documentation can be found [here](https://error-reporting-api.herokuapp.com/).
+                    The ReDoc documentation can be found [here](https://error-reporting-api.herokuapp.com/redoc)
+
+                    The endpoints requires a JWT Token. You can use the `username: 'admin'` and `password: 'admin'` to get the authentication token through the `/token` endpoint.
+
+                    Once you get the token, you should set the header `'Authorization: Bearer <your-token-here>'` for your subsequent requests. The token is valid during 5 minutes.
+
                     Note: the trailing slashes at the endpoints are optional.
                     """,
         contact=openapi.Contact(email="scjonatas@gmail.com"),
